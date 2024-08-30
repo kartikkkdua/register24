@@ -1,6 +1,31 @@
-import React from "react";
+import React, { useState } from "react";
 import logo from "./logo (1).png"
+import { useNavigate } from "react-router-dom";
+
 const Register = () => {
+  const [showPopup, setShowPopup] = useState(false);
+  const [receiptId, setReceiptId] = useState("");
+  const [receiptIdError, setReceiptIdError] = useState("");
+  const navigate = useNavigate();
+
+  const handlePayCashClick = () => {
+    setShowPopup(true);
+  };
+
+  const handlePopupClose = () => {
+    setShowPopup(false);
+    setReceiptIdError(""); // Reset error when closing the popup
+  };
+
+  const handleSubmit = () => {
+    if (receiptId.trim() === "") {
+      setReceiptIdError("Receipt ID is required.");
+    } else {
+      console.log("Receipt ID Submitted:", receiptId);
+      setShowPopup(false);
+      navigate("/success"); // Redirect to /success
+    }
+  };
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
       
@@ -212,6 +237,7 @@ const Register = () => {
               <option value="1">1 Year</option>
               <option value="2">2 Years</option>
               <option value="3">3 Years</option>
+              <option value="4">4 Years</option>
             </select>
           </div>
           <div className="mb-4 w-2/3 px-2">
@@ -238,6 +264,7 @@ const Register = () => {
             <input
               type="button"
               value="Pay Cash"
+              onClick={handlePayCashClick}
               className="w-full py-2 px-4 bg-blue-500 text-white rounded hover:bg-blue-600 cursor-pointer"
             />
           </div>
@@ -248,12 +275,44 @@ const Register = () => {
               className="w-full py-2 px-4 bg-blue-500 text-white rounded hover:bg-blue-600 cursor-pointer"
             />
           </div>
+          {/* Popup Modal */}
+      {/* Popup Modal */}
+      {showPopup && (
+            <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+              <div className="bg-white p-6 rounded-lg shadow-lg max-w-sm w-full">
+                <h3 className="text-lg font-semibold mb-4">Enter Receipt ID</h3>
+                <input
+                  type="text"
+                  id="receiptId"
+                  value={receiptId}
+                  onChange={(e) => setReceiptId(e.target.value)}
+                  placeholder="Enter your Receipt ID"
+                  className="w-full p-2 border border-gray-300 rounded mb-4 focus:outline-none focus:border-blue-500"
+                />
+                {receiptIdError && (
+                  <p className="text-red-500 text-sm mb-4">{receiptIdError}</p>
+                )}
+                <div className="flex justify-end space-x-2">
+                  <button
+                    onClick={handlePopupClose}
+                    className="py-2 px-4 bg-gray-500 text-white rounded hover:bg-gray-600"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={handleSubmit}
+                    className="py-2 px-4 bg-blue-500 text-white rounded hover:bg-blue-600"
+                  >
+                    Submit
+                  </button>
+            </div>
+          </div>
+        </div>
+      )}
         </form>
-
-        
       </div>
     </div>
   );
-};
+}
 
 export default Register;
