@@ -1,5 +1,5 @@
 import React from "react";
-import logo from "./logo.jpeg"
+import logo from "./logo (1).png"
 
 const Register = ({ onClose }) => {
   return (
@@ -9,9 +9,9 @@ const Register = ({ onClose }) => {
       <img 
       src={logo}
       alt="logo"
-      className="mb-4 h-16 w-auto" // Adjust height and other styles as needed
+      className="mb-4 h-16 w-auto mx-auto my-auto" // Adjust height and other styles as needed
       />
-        <h2 className="text-2xl font-semibold mb-4">Register</h2>
+        <h2 className="text-2xl font-semibold mb-4">Prime Member Registration</h2>
         <form className="text-gray-700 flex flex-wrap justify-between">
           <div className="mb-4 w-full px-2">
             <label htmlFor="name" className="block text-sm font-medium">
@@ -227,12 +227,7 @@ const Register = ({ onClose }) => {
           </div>
         </form>
 
-        <button
-          className="bg-red-500 text-white py-2 px-4 rounded hover:bg-red-600 cursor-pointer"
-          onClick={onClose}
-        >
-          Close
-        </button>
+        
       </div>
     </div>
   );
