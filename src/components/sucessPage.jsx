@@ -16,7 +16,7 @@ const SuccessContainer = styled.div`
 `;
 
 const Logo = styled.img`
-  width: 150px; 
+  width: 150px; // Adjust the size as needed
   margin-bottom: 20px;
 `;
 
@@ -36,7 +36,7 @@ const BackLink = styled(Link)`
 
 const SuccessPage = () => {
   const location = useLocation();
-  const { transactionId, totalAmount } = location.state || {};
+  const { transactionId, totalAmount} = location.state || {};
 
   return (
     <SuccessContainer>
@@ -49,6 +49,7 @@ const SuccessPage = () => {
       {totalAmount !== undefined && (
         <p>Total Amount: <strong>₹{totalAmount}</strong></p>
       )}
+
     </SuccessContainer>
   );
 };

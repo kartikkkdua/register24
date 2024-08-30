@@ -1,9 +1,13 @@
-import React from 'react';
-import { Formik, Form, Field, ErrorMessage } from 'formik';
-import axios from 'axios';
-import styled from 'styled-components';
-import { primeMemberValidationSchema } from 'src/components/validators.js';
+// src/components/PrimeMemberForm.jsx
 
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import { useHistory } from 'react-router-dom'; // Import useHistory
+import styled from 'styled-components';
+import { Formik, Field, Form, ErrorMessage } from 'formik';
+import * as Yup from 'yup';
+
+// Styled Components
 const FormContainer = styled.div`
   max-width: 600px;
   margin: 50px auto;
@@ -127,12 +131,18 @@ const TotalAmount = styled.div`
 `;
 
 const ErrorText = styled.div`
-  color: ${({ theme }) => theme.error};
+  color: red;
   font-size: 14px;
   margin-top: 5px;
 `;
 
+// PrimeMemberForm Component
 const PrimeMemberForm = () => {
+  const [totalAmount, setTotalAmount] = useState(0);
+  const [discount, setDiscount] = useState(0);
+  const [couponCode, setCouponCode] = useState('');
+  const history = useHistory();
+
   const membershipPrices = {
     '1 Year': 500,
     '2 Years': 900,
@@ -140,13 +150,22 @@ const PrimeMemberForm = () => {
     '4 Years': 1600,
   };
 
+  useEffect(() => {
+    const price = membershipPrices['1 Year'] || 0;
+    setTotalAmount(price);
+  }, []);
+
   const handleSubmit = async (values, { setSubmitting }) => {
     try {
-      const response = await axios.post('/api/register', values);
-      console.log('Form submitted successfully:', response.data);
-      alert('Registration successful!');
+      const response = await axios.post('/api/register', { ...values, totalAmount, couponCode });
+      const { transactionId, discountApplied } = response.data;
+
+      history.push({
+        pathname: '/success',
+        state: { transactionId, totalAmount, discountApplied }
+      });
     } catch (error) {
-      console.error('Form submission error:', error);
+      console.error('There was an error registering the member!', error);
       alert('Failed to register. Please try again.');
     } finally {
       setSubmitting(false);
@@ -168,126 +187,209 @@ const PrimeMemberForm = () => {
         degree: '',
         graduationStartYear: '',
         graduationEndYear: '',
+        graduationCurrentYear: '',
         membershipPeriod: '',
         agreeToCodeOfEthics: false,
+        couponCode: '',
       }}
-      validationSchema={primeMemberValidationSchema}
+      validationSchema={Yup.object({
+        fullName: Yup.string().required('Full Name is required'),
+        dateOfBirth: Yup.date().required('Date of Birth is required'),
+        gender: Yup.string().required('Gender is required'),
+        primaryEmailId: Yup.string().email('Invalid email address').required('Primary Email ID is required'),
+        phoneNumber: Yup.string().matches(/^\d{10}$/, 'Invalid phone number').required('Phone Number is required'),
+        sapId: Yup.string().required('SAP ID is required'),
+        collegeEmailId: Yup.string().email('Invalid email address').required('College Email ID is required'),
+        course: Yup.string().required('Course is required'),
+        department: Yup.string().required('Department is required'),
+        degree: Yup.string().required('Degree is required'),
+        graduationStartYear: Yup.number().required('Graduation Start Year is required').min(1900, 'Invalid year').max(new Date().getFullYear(), 'Invalid year'),
+        graduationEndYear: Yup.number().required('Graduation End Year is required').min(1900, 'Invalid year').max(new Date().getFullYear(), 'Invalid year'),
+        graduationCurrentYear: Yup.number().required('Graduation Current Year is required').min(1900, 'Invalid year').max(new Date().getFullYear(), 'Invalid year'),
+        membershipPeriod: Yup.string().required('Membership Period is required'),
+        agreeToCodeOfEthics: Yup.boolean().oneOf([true], 'You must agree to the Code of Ethics'),
+        couponCode: Yup.string().matches(/^[A-Z0-9]{6}$/, 'Invalid coupon code').optional(),
+      })}
       onSubmit={handleSubmit}
     >
-      {({ isSubmitting, setFieldValue, values }) => (
-        <FormContainer>
-          <h2>Prime Member Registration</h2>
-          <MembershipPrices>
-            <h3>Membership Prices</h3>
-            <p>1 Year: ₹500</p>
-            <p>2 Years: ₹900</p>
-            <p>3 Years: ₹1300</p>
-            <p>4 Years: ₹1600</p>
-          </MembershipPrices>
+      {({ isSubmitting }) => (
+        <Form>
+          <FormGroup>
+            <Label htmlFor="fullName">Full Name</Label>
+            <Input
+              type="text"
+              id="fullName"
+              name="fullName"
+              placeholder="Enter your full name"
+            />
+            <ErrorMessage name="fullName" component={ErrorText} />
+          </FormGroup>
 
-          <Form>
-            <FormGroup>
-              <Label htmlFor="fullName">Full Name</Label>
-              <Input name="fullName" placeholder="Enter your full name" />
-              <ErrorMessage name="fullName" component={ErrorText} />
-            </FormGroup>
+          <FormGroup>
+            <Label htmlFor="dateOfBirth">Date of Birth</Label>
+            <Input
+              type="date"
+              id="dateOfBirth"
+              name="dateOfBirth"
+            />
+            <ErrorMessage name="dateOfBirth" component={ErrorText} />
+          </FormGroup>
 
-            <FormGroup>
-              <Label htmlFor="dateOfBirth">Date of Birth</Label>
-              <Input name="dateOfBirth" type="date" />
-              <ErrorMessage name="dateOfBirth" component={ErrorText} />
-            </FormGroup>
+          <FormGroup>
+            <Label htmlFor="gender">Gender</Label>
+            <Select as="select" id="gender" name="gender">
+              <option value="" disabled>Select Gender</option>
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+              <option value="Other">Other</option>
+            </Select>
+            <ErrorMessage name="gender" component={ErrorText} />
+          </FormGroup>
 
-            <FormGroup>
-              <Label htmlFor="gender">Gender</Label>
-              <Select name="gender" as="select">
-                <option value="" label="Select Gender" />
-                <option value="Male" label="Male" />
-                <option value="Female" label="Female" />
-                <option value="Other" label="Other" />
-              </Select>
-              <ErrorMessage name="gender" component={ErrorText} />
-            </FormGroup>
+          <FormGroup>
+            <Label htmlFor="primaryEmailId">Primary Email ID</Label>
+            <Input
+              type="email"
+              id="primaryEmailId"
+              name="primaryEmailId"
+              placeholder="Enter your primary email ID"
+            />
+            <ErrorMessage name="primaryEmailId" component={ErrorText} />
+          </FormGroup>
 
-            <FormGroup>
-              <Label htmlFor="primaryEmailId">Primary Email ID</Label>
-              <Input name="primaryEmailId" type="email" placeholder="Enter your primary email ID" />
-              <ErrorMessage name="primaryEmailId" component={ErrorText} />
-            </FormGroup>
+          <FormGroup>
+            <Label htmlFor="phoneNumber">Phone Number (Whatsapp)</Label>
+            <Input
+              type="tel"
+              id="phoneNumber"
+              name="phoneNumber"
+              placeholder="Enter your phone number"
+            />
+            <ErrorMessage name="phoneNumber" component={ErrorText} />
+          </FormGroup>
 
-            <FormGroup>
-              <Label htmlFor="phoneNumber">Phone Number (Whatsapp)</Label>
-              <Input name="phoneNumber" placeholder="Enter your phone number" />
-              <ErrorMessage name="phoneNumber" component={ErrorText} />
-            </FormGroup>
+          <FormGroup>
+            <Label htmlFor="sapId">SAP ID</Label>
+            <Input
+              type="text"
+              id="sapId"
+              name="sapId"
+              placeholder="Enter your SAP ID"
+            />
+            <ErrorMessage name="sapId" component={ErrorText} />
+          </FormGroup>
 
-            <FormGroup>
-              <Label htmlFor="sapId">SAP ID</Label>
-              <Input name="sapId" placeholder="Enter your SAP ID" />
-              <ErrorMessage name="sapId" component={ErrorText} />
-            </FormGroup>
+          <FormGroup>
+            <Label htmlFor="collegeEmailId">College Email ID</Label>
+            <Input
+              type="email"
+              id="collegeEmailId"
+              name="collegeEmailId"
+              placeholder="Enter your college email ID"
+            />
+            <ErrorMessage name="collegeEmailId" component={ErrorText} />
+          </FormGroup>
 
-            <FormGroup>
-              <Label htmlFor="collegeEmailId">College Email ID</Label>
-              <Input name="collegeEmailId" type="email" placeholder="Enter your college email ID" />
-              <ErrorMessage name="collegeEmailId" component={ErrorText} />
-            </FormGroup>
+          <FormGroup>
+            <Label htmlFor="course">Course</Label>
+            <Input
+              type="text"
+              id="course"
+              name="course"
+              placeholder="Enter your course"
+            />
+            <ErrorMessage name="course" component={ErrorText} />
+          </FormGroup>
 
-            <FormGroup>
-              <Label htmlFor="course">Course</Label>
-              <Input name="course" placeholder="Enter your course" />
-              <ErrorMessage name="course" component={ErrorText} />
-            </FormGroup>
+          <FormGroup>
+            <Label htmlFor="department">Department</Label>
+            <Input
+              type="text"
+              id="department"
+              name="department"
+              placeholder="Enter your department"
+            />
+            <ErrorMessage name="department" component={ErrorText} />
+          </FormGroup>
 
-            <FormGroup>
-              <Label htmlFor="department">Department</Label>
-              <Input name="department" placeholder="Enter your department" />
-              <ErrorMessage name="department" component={ErrorText} />
-            </FormGroup>
+          <FormGroup>
+            <Label htmlFor="degree">Degree</Label>
+            <Input
+              type="text"
+              id="degree"
+              name="degree"
+              placeholder="Enter your degree"
+            />
+            <ErrorMessage name="degree" component={ErrorText} />
+          </FormGroup>
 
-            <FormGroup>
-              <Label htmlFor="degree">Degree</Label>
-              <Input name="degree" placeholder="Enter your degree" />
-              <ErrorMessage name="degree" component={ErrorText} />
-            </FormGroup>
+          <FormGroup>
+            <Label htmlFor="graduationStartYear">Graduation Start Year</Label>
+            <Input
+              type="number"
+              id="graduationStartYear"
+              name="graduationStartYear"
+              placeholder="Enter your graduation start year"
+            />
+            <ErrorMessage name="graduationStartYear" component={ErrorText} />
+          </FormGroup>
 
-            <FormGroup>
-              <Label htmlFor="graduationStartYear">Graduation Start Year</Label>
-              <Input name="graduationStartYear" type="number" placeholder="Enter your graduation start year" />
-              <ErrorMessage name="graduationStartYear" component={ErrorText} />
-            </FormGroup>
+          <FormGroup>
+            <Label htmlFor="graduationEndYear">Graduation End Year</Label>
+            <Input
+              type="number"
+              id="graduationEndYear"
+              name="graduationEndYear"
+              placeholder="Enter your graduation end year"
+            />
+            <ErrorMessage name="graduationEndYear" component={ErrorText} />
+          </FormGroup>
 
-            <FormGroup>
-              <Label htmlFor="graduationEndYear">Graduation End Year</Label>
-              <Input name="graduationEndYear" type="number" placeholder="Enter your graduation end year" />
-              <ErrorMessage name="graduationEndYear" component={ErrorText} />
-            </FormGroup>
+          <FormGroup>
+            <Label htmlFor="graduationCurrentYear">Graduation Current Year</Label>
+            <Input
+              type="number"
+              id="graduationCurrentYear"
+              name="graduationCurrentYear"
+              placeholder="Enter your current year of graduation"
+            />
+            <ErrorMessage name="graduationCurrentYear" component={ErrorText} />
+          </FormGroup>
 
-            <FormGroup>
-              <Label htmlFor="membershipPeriod">Membership Period</Label>
-              <Select name="membershipPeriod" as="select">
-                <option value="" label="Select Membership Period" />
-                <option value="1 Year" label="1 Year" />
-                <option value="2 Years" label="2 Years" />
-                <option value="3 Years" label="3 Years" />
-                <option value="4 Years" label="4 Years" />
-              </Select>
-              <ErrorMessage name="membershipPeriod" component={ErrorText} />
-            </FormGroup>
+          <FormGroup>
+            <Label htmlFor="membershipPeriod">Membership Period</Label>
+            <Select as="select" id="membershipPeriod" name="membershipPeriod">
+              <option value="" disabled>Select Membership Period</option>
+              <option value="1 Year">1 Year</option>
+              <option value="2 Years">2 Years</option>
+              <option value="3 Years">3 Years</option>
+              <option value="4 Years">4 Years</option>
+            </Select>
+            <ErrorMessage name="membershipPeriod" component={ErrorText} />
+          </FormGroup>
 
-            <FormGroup>
-              <Label htmlFor="agreeToCodeOfEthics">
-                <Field type="checkbox" name="agreeToCodeOfEthics" />
-                I agree to the Code of Ethics
-              </Label>
-              <ErrorMessage name="agreeToCodeOfEthics" component={ErrorText} />
-            </FormGroup>
+          <FormGroup>
+            <Field type="checkbox" id="agreeToCodeOfEthics" name="agreeToCodeOfEthics" />
+            <Label htmlFor="agreeToCodeOfEthics">I agree to the Code of Ethics</Label>
+            <ErrorMessage name="agreeToCodeOfEthics" component={ErrorText} />
+          </FormGroup>
 
-            <Button type="submit" disabled={isSubmitting}>
-              Submit
-            </Button>
-          </Form>
-        </FormContainer>
+          <FormGroup>
+            <Label htmlFor="couponCode">Coupon Code</Label>
+            <Input
+              type="text"
+              id="couponCode"
+              name="couponCode"
+              placeholder="Enter coupon code (if any)"
+              value={couponCode}
+              onChange={(e) => setCouponCode(e.target.value)}
+            />
+            <ErrorMessage name="couponCode" component={ErrorText} />
+          </FormGroup>
+
+          <TotalAmount>Total Amount: ₹{totalAmount - discount}</TotalAmount>
+          <Button type="submit" disabled={isSubmitting}>Proceed to Payment</Button>
+        </Form>
       )}
     </Formik>
   );
