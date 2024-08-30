@@ -1,12 +1,6 @@
-// src/styles/GlobalStyle.js
-
 import { createGlobalStyle } from 'styled-components';
 
 const GlobalStyle = createGlobalStyle`
-  html {
-    scroll-behavior: smooth;
-  }
-
   body {
     background-color: ${({ theme }) => theme.body};
     color: ${({ theme }) => theme.text};
@@ -58,13 +52,7 @@ const GlobalStyle = createGlobalStyle`
     }
 
     &:active {
-      background-color: ${({ theme }) => theme.buttonActiveBackground};
       transform: translateY(0);
-    }
-
-    &:focus {
-      outline: 2px solid ${({ theme }) => theme.primary};
-      outline-offset: 2px;
     }
   }
 
@@ -80,11 +68,6 @@ const GlobalStyle = createGlobalStyle`
     color: ${({ theme }) => theme.primary};
     font-size: 22px;
     margin-bottom: 15px;
-  }
-
-  .error {
-    color: #f44336; /* Red color for error messages */
-    font-size: 14px;
   }
 
   @media (max-width: 768px) {

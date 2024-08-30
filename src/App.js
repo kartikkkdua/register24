@@ -1,20 +1,14 @@
-// src/App.js
-
 import React from 'react';
-import PrimeMemberForm from './components/PrimeMemberForm';
+import { ThemeProvider } from 'styled-components';
 import GlobalStyle from './styles/GlobalStyle';
 import theme from './styles/theme';
-import { ThemeProvider } from 'styled-components';
+import PrimeMemberForm from './components/PrimeMemberForm';
 
-function App() {
-  return (
-    <ThemeProvider theme={theme}>
-      <>
-        <GlobalStyle />
-        <PrimeMemberForm />
-      </>
-    </ThemeProvider>
-  );
-}
+const App = () => (
+  <ThemeProvider theme={theme}>
+    <GlobalStyle />
+    <PrimeMemberForm />
+  </ThemeProvider>
+);
 
 export default App;
