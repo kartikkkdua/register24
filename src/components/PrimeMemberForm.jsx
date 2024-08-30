@@ -1,11 +1,10 @@
 import React from "react";
 import logo from "./logo (1).png"
-
-const Register = ({ onClose }) => {
+const Register = () => {
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
       
-      <div className="bg-white bg-opacity-75 p-8 rounded-lg shadow-lg text-center max-w-2xl w-full mx-4">
+      <div className="bg-white bg-opacity-75 p-8 rounded-lg shadow-lg text-center max-w-2xl w-full mx-4 pt-2 pb-2">
       <img 
       src={logo}
       alt="logo"
@@ -55,11 +54,23 @@ const Register = ({ onClose }) => {
 
           <div className="mb-4 w-1/2 px-2">
             <label htmlFor="email" className="block text-sm font-medium">
-              Email
+              College Email
             </label>
             <input
               type="email"
-              id="email"
+              id="collegeEmail"
+              name="email"
+              placeholder="Your email.."
+              className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:border-blue-500"
+            />
+          </div>
+          <div className="mb-4 w-1/2 px-2">
+            <label htmlFor="email" className="block text-sm font-medium">
+              Personal Email
+            </label>
+            <input
+              type="email"
+              id="personalemail"
               name="email"
               placeholder="Your email.."
               className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:border-blue-500"
@@ -68,7 +79,7 @@ const Register = ({ onClose }) => {
 
           <div className="mb-4 w-1/2 px-2">
             <label htmlFor="phone" className="block text-sm font-medium">
-              Phone
+              Phone (WhatsApp)
             </label>
             <input
               type="tel"
@@ -174,7 +185,7 @@ const Register = ({ onClose }) => {
             </select>
           </div>
 
-          <div className="mb-4 w-full px-2">
+          <div className="mb-4 w-1/2 px-2">
             <label
               htmlFor="membershipPeriod"
               className="block text-sm font-medium"
