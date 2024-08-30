@@ -1,4 +1,3 @@
-// src/components/PrimeMemberForm.jsx
 
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
@@ -7,7 +6,6 @@ import styled from 'styled-components';
 import { Formik, Field, Form, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 
-// Styled Components
 const FormContainer = styled.div`
   max-width: 600px;
   margin: 50px auto;
