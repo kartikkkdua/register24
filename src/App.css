@@ -36,3 +36,51 @@
     transform: rotate(360deg);
   }
 }
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  background-color: #030a26;
+  background-image: url('./components/grey.png');
+  /* backdrop-filter: blur(3px); */
+  background-size: 90px;
+background-attachment: fixed;
+background-position: 0px -10px;
+}
+body::before{
+  width: 100vw;
+  height: 100vh;
+  position: relative;
+}
+.blur-background{
+  height: 100vh;
+  width: 100vw;
+  z-index: -99;
+  backdrop-filter: blur(3px);
+  position: fixed;
+  color: black;
+}
+
+.aayu-det{
+  list-style: circle;
+  font-size: 1.1rem;
+}
+
+.pra-det{
+  list-style: circle;
+  font-size: 1.3rem;
+}
+
+@media (max-width:800px) {
+  .pratha{
+    gap: 2rem !important;
+  }
+}
+
+@media (max-width:400px) {
+  .pra-det{
+    list-style: circle;
+    font-size: 1rem;
+  }
+}
