@@ -2,8 +2,8 @@ import React from "react";
 
 const Register = ({ onClose }) => {
   return (
-    <div className="fixed  left-0 w-full h-1/2 top-1/4 bg-black bg-opacity-50 flex justify-center items-center z-50">
-      <div className="bg-white bg-opacity-75 p-8 rounded-lg shadow-lg text-center max-w-md">
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+      <div className="bg-white bg-opacity-75 p-8 rounded-lg shadow-lg text-center max-w-md w-full mx-4">
         <h2 className="text-2xl font-semibold mb-4">Register</h2>
         <form className="text-gray-700 flex flex-wrap justify-between">
           <div className="mb-4 w-full px-2">
