@@ -3,7 +3,7 @@ import logo from "./logo (1).png"
 import { useNavigate } from "react-router-dom";
 
 import axios from "axios";
-
+import { userValidator } from "../userValidator";
 
 
 const Register = ({ onClose }) => {
@@ -40,7 +40,9 @@ const Register = ({ onClose }) => {
   const [totalAmount, setTotalAmount] = useState(0);
 
   const calculateDiscount = () => {
-    const discount = Math.floor(totalAmount / 10) * 10;
+    const amt = totalAmount * 0.75 
+    const discount = Math.floor(amt / 10) * 10;
+    console.log(discount)
     return discount;
   }
 
@@ -102,11 +104,16 @@ const Register = ({ onClose }) => {
       collegeEmail,
       department,
     };
+    const validate = userValidator.safeParse({ phoneNumber});
+    if (!validate.success) {
+      alert(validate.error.errors[0].message);
+      return;
+    }
 
     console.log("Form Data Submitted: ", formData);
 
-    const res = await axios.post('http://localhost:8080/api/v1/createOrder', {
-      amount: 100,
+    const res = await axios.post('https://yugmak24.el.r.appspot.com/api/v1/createOrder', {
+      amount: totalAmount * 100,
       currency: "INR",
       receipt: "receipt#1",
     },
@@ -130,7 +137,7 @@ const Register = ({ onClose }) => {
       handler: async function (response) {
         try {
           const verifyResponse = await axios.post(
-            `http://localhost:8080/api/v1/prime/register`,
+            `https://yugmak24.el.r.appspot.com/api/v1/prime/register`,
             {
               paymentId: response.razorpay_payment_id,
               orderId: response.razorpay_order_id,
@@ -160,7 +167,12 @@ const Register = ({ onClose }) => {
           );
 
           if (verifyResponse.data.success) {
-            alert("Payment successful!");
+            navigate("/success", {
+              state: {
+                transactionId: response.razorpay_payment_id,
+                totalAmount: amount
+              }
+            }); // Redirect to /success
           } else {
             alert(
               verifyResponse.data.message ||
@@ -194,7 +206,7 @@ const Register = ({ onClose }) => {
   const handleCouponApply = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post('http://localhost:8080/api/v1/prime/applyCoupon', {
+      const res = await axios.post('https://yugmak24.el.r.appspot.com/api/v1/prime/applyCoupon', {
         couponCode: coupon,
         phoneNumber
       },
@@ -243,8 +255,13 @@ const Register = ({ onClose }) => {
       setReceiptIdError("Receipt ID is required.");
       return;
     }
+    const validate = userValidator.safeParse({ phoneNumber });
+    if (!validate.success) {
+      alert(validate.error.errors[0].message);
+      return;
+    }
     try {
-      const res = await axios.post('http://localhost:8080/api/v1/prime/primeCashPayment', {
+      const res = await axios.post('https://yugmak24.el.r.appspot.com/api/v1/prime/primeCashPayment', {
         fullName: name,
         dateOfBirth: dob,
         gender,
