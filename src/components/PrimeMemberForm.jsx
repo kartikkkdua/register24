@@ -1,9 +1,16 @@
 import React from "react";
+import logo from "./logo.jpeg"
 
 const Register = ({ onClose }) => {
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-      <div className="bg-white bg-opacity-75 p-8 rounded-lg shadow-lg text-center max-w-md w-full mx-4">
+      
+      <div className="bg-white bg-opacity-75 p-8 rounded-lg shadow-lg text-center max-w-2xl w-full mx-4">
+      <img 
+      src={logo}
+      alt="logo"
+      className="mb-4 h-16 w-auto" // Adjust height and other styles as needed
+      />
         <h2 className="text-2xl font-semibold mb-4">Register</h2>
         <form className="text-gray-700 flex flex-wrap justify-between">
           <div className="mb-4 w-full px-2">
@@ -72,7 +79,7 @@ const Register = ({ onClose }) => {
             />
           </div>
 
-          <div className="mb-4 w-1/3 px-2">
+          <div className="mb-4 w-1/2 px-2">
             <label htmlFor="sapId" className="block text-sm font-medium">
               SAP ID
             </label>
@@ -85,7 +92,7 @@ const Register = ({ onClose }) => {
             />
           </div>
 
-          <div className="mb-4 w-4/6 px-2">
+          <div className="mb-4 w-1/2 px-2">
             <label htmlFor="course" className="block text-sm font-medium">
               Course
             </label>
@@ -126,6 +133,8 @@ const Register = ({ onClose }) => {
               <option value="2021">2021</option>
               <option value="2022">2022</option>
               <option value="2023">2023</option>
+              <option value="2023">2024</option>
+
             </select>
           </div>
 
@@ -144,6 +153,8 @@ const Register = ({ onClose }) => {
               <option value="2025">2025</option>
               <option value="2026">2026</option>
               <option value="2027">2027</option>
+              <option value="2027">2028</option>
+              <option value="2027">2029</option>
             </select>
           </div>
 
@@ -163,7 +174,7 @@ const Register = ({ onClose }) => {
             </select>
           </div>
 
-          <div className="mb-4 w-1/2 px-2">
+          <div className="mb-4 w-full px-2">
             <label
               htmlFor="membershipPeriod"
               className="block text-sm font-medium"
@@ -180,11 +191,37 @@ const Register = ({ onClose }) => {
               <option value="3">3 Years</option>
             </select>
           </div>
-
-          <div className="w-full px-2 mb-4">
+          <div className="mb-4 w-2/3 px-2">
+            <label htmlFor="degree" className="block text-sm font-medium">
+              Coupon Code
+            </label>
             <input
-              type="submit"
-              value="Submit"
+              type="text"
+              id="coupon code"
+              name="coupon code"
+              placeholder="Your Coupon Code.."
+              className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:border-blue-500"
+            />
+          </div>
+          <div className="w-1/3 px-2 mb-2 mt-5">
+            <input
+              type="button"
+              value="Apply"
+              className="w-full py-2 px-4 bg-blue-500 text-white rounded hover:bg-blue-600 cursor-pointer"
+            />
+          </div>
+
+          <div className="w-1/2 px-2 mb-4">
+            <input
+              type="button"
+              value="Pay Cash"
+              className="w-full py-2 px-4 bg-blue-500 text-white rounded hover:bg-blue-600 cursor-pointer"
+            />
+          </div>
+          <div className="w-1/2 px-2 mb-4">
+            <input
+              type="button"
+              value="Pay Online"
               className="w-full py-2 px-4 bg-blue-500 text-white rounded hover:bg-blue-600 cursor-pointer"
             />
           </div>
