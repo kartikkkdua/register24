@@ -21,16 +21,6 @@ const Register = ({ onClose }) => {
     setReceiptIdError(""); // Reset error when closing the popup
   };
 
-  // const handleSubmit = () => {
-  //   if (receiptId.trim() === "") {
-  //     setReceiptIdError("Receipt ID is required.");
-  //   } else {
-  //     console.log("Receipt ID Submitted:", receiptId);
-  //     setShowPopup(false);
-  //     navigate("/success"); // Redirect to /success
-  //   }
-  // };
-
   // Initialize state variables for each form field
   const [name, setName] = useState("");
   const [dob, setDob] = useState("");
@@ -201,7 +191,8 @@ const Register = ({ onClose }) => {
     paymentObject.open();
   };
 
-  const handleCouponApply = async () => {
+  const handleCouponApply = async (e) => {
+    e.preventDefault();
     try {
       const res = await axios.post('http://localhost:8080/api/v1/prime/applyCoupon', {
         couponCode: coupon,
@@ -227,7 +218,8 @@ const Register = ({ onClose }) => {
     }
   }
 
-  const handlePayCash = async () => {
+  const handlePayCash = async (e) => {
+    e.preventDefault();
     if (
       !name ||
       !dob ||
@@ -252,7 +244,7 @@ const Register = ({ onClose }) => {
       return;
     }
     try {
-      const res = await axios.post('http://localhost:8080/api/v1/prime/cashPayment', {
+      const res = await axios.post('http://localhost:8080/api/v1/prime/primeCashPayment', {
         fullName: name,
         dateOfBirth: dob,
         gender,
@@ -280,8 +272,8 @@ const Register = ({ onClose }) => {
         return;
       }
 
-      console.log("Receipt ID Submitted:", receiptId);
-      setShowPopup(false);
+      // console.log("Receipt ID Submitted:", receiptId);
+      // setShowPopup(false);
       navigate("/success"); // Redirect to /success
 
       console.log(res.data);
@@ -401,6 +393,8 @@ const Register = ({ onClose }) => {
               type="text"
               id="sapId"
               name="sapId"
+              value={sapId}
+              onChange={(e) => setSapId(e.target.value)}
               placeholder="Enter your SAP ID"
               className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:border-blue-500"
             />
@@ -575,6 +569,7 @@ const Register = ({ onClose }) => {
                   type="text"
                   id="receiptId"
                   value={receiptId}
+                  required
                   onChange={(e) => setReceiptId(e.target.value)}
                   placeholder="Enter your Receipt ID"
                   className="w-full p-2 border border-gray-300 rounded mb-4 focus:outline-none focus:border-blue-500"
