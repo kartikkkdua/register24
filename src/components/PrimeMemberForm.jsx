@@ -4,7 +4,7 @@ const Register = () => {
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
       
-      <div className="bg-white bg-opacity-75 p-8 rounded-lg shadow-lg text-center max-w-2xl w-full mx-4 pt-2 pb-2">
+      <div className="bg-white bg-opacity-75 p-8 rounded-lg shadow-lg text-center max-w-2xl w-full mx-4 pt-3 pb-3">
       <img 
       src={logo}
       alt="logo"
@@ -12,7 +12,7 @@ const Register = () => {
       />
         <h2 className="text-2xl font-semibold mb-4">Prime Member Registration</h2>
         <form className="text-gray-700 flex flex-wrap justify-between">
-          <div className="mb-4 w-full px-2">
+          <div className="mb-4 w-1/2 px-2">
             <label htmlFor="name" className="block text-sm font-medium">
               Name
             </label>
@@ -20,7 +20,7 @@ const Register = () => {
               type="text"
               id="name"
               name="name"
-              placeholder="Your name.."
+              placeholder="Enter your Name"
               className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:border-blue-500"
             />
           </div>
@@ -60,7 +60,7 @@ const Register = () => {
               type="email"
               id="collegeEmail"
               name="email"
-              placeholder="Your email.."
+              placeholder="Enter your college email"
               className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:border-blue-500"
             />
           </div>
@@ -72,7 +72,7 @@ const Register = () => {
               type="email"
               id="personalemail"
               name="email"
-              placeholder="Your email.."
+              placeholder="Enter your personal email"
               className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:border-blue-500"
             />
           </div>
@@ -85,7 +85,7 @@ const Register = () => {
               type="tel"
               id="phone"
               name="phone"
-              placeholder="Your phone.."
+              placeholder="Enter your phone number"
               className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:border-blue-500"
             />
           </div>
@@ -98,7 +98,19 @@ const Register = () => {
               type="text"
               id="sapId"
               name="sapId"
-              placeholder="Your SAP ID.."
+              placeholder="Enter your SAP ID"
+              className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:border-blue-500"
+            />
+          </div>
+          <div className="mb-4 w-1/2 px-2">
+            <label htmlFor="sapId" className="block text-sm font-medium">
+              Department
+            </label>
+            <input
+              type="text"
+              id="department"
+              name="department"
+              placeholder="Enter your Department"
               className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:border-blue-500"
             />
           </div>
@@ -111,7 +123,7 @@ const Register = () => {
               type="text"
               id="course"
               name="course"
-              placeholder="Your course.."
+              placeholder="Enter your course"
               className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:border-blue-500"
             />
           </div>
@@ -124,7 +136,7 @@ const Register = () => {
               type="text"
               id="degree"
               name="degree"
-              placeholder="Your degree.."
+              placeholder="Enter your degree"
               className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:border-blue-500"
             />
           </div>
@@ -210,7 +222,7 @@ const Register = () => {
               type="text"
               id="coupon code"
               name="coupon code"
-              placeholder="Your Coupon Code.."
+              placeholder="Enter your coupon code"
               className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:border-blue-500"
             />
           </div>
