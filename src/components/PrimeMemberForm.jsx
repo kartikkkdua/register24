@@ -118,9 +118,9 @@ const Register = ({ onClose }) => {
     setLoading(true);
     try {
       const res = await axios.post(
-        "http://localhost:8080/api/v1/createOrder",
+        "https://yugmak24.el.r.appspot.com/api/v1/createOrder",
         {
-          amount: 100,
+          amount: totalAmount * 100,
           currency: "INR",
           receipt: "receipt#1",
         },
@@ -144,7 +144,7 @@ const Register = ({ onClose }) => {
           try {
             setLoading(true);
             const verifyResponse = await axios.post(
-              `http://localhost:8080/api/v1/prime/register`,
+              `https://yugmak24.el.r.appspot.com/api/v1/prime/register`,
               {
                 paymentId: response.razorpay_payment_id,
                 orderId: response.razorpay_order_id,
