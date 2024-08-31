@@ -4,24 +4,16 @@ import { useNavigate } from "react-router-dom";
 
 import axios from "axios";
 import { userValidator } from "../userValidator";
+import { set } from "zod";
 
 
 const Register = ({ onClose }) => {
+  const [loading, setLoading] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
   const [receiptId, setReceiptId] = useState("");
   const [receiptIdError, setReceiptIdError] = useState("");
   const navigate = useNavigate();
 
-  const handlePayCashClick = () => {
-    setShowPopup(true);
-  };
-
-  const handlePopupClose = () => {
-    setShowPopup(false);
-    setReceiptIdError(""); // Reset error when closing the popup
-  };
-
-  // Initialize state variables for each form field
   const [name, setName] = useState("");
   const [dob, setDob] = useState("");
   const [gender, setGender] = useState("");
@@ -38,13 +30,6 @@ const Register = ({ onClose }) => {
   const [membershipPeriod, setMembershipPeriod] = useState("");
   const [coupon, setCoupon] = useState("");
   const [totalAmount, setTotalAmount] = useState(0);
-
-  const calculateDiscount = () => {
-    const amt = totalAmount * 0.75 
-    const discount = Math.floor(amt / 10) * 10;
-    console.log(discount)
-    return discount;
-  }
 
   useEffect(() => {
     switch (membershipPeriod) {
@@ -65,7 +50,21 @@ const Register = ({ onClose }) => {
     }
   }, [membershipPeriod]);
 
-  // Handle form submission
+  const calculateDiscount = () => {
+    const amt = totalAmount * 0.75;
+    const discount = Math.floor(amt / 10) * 10;
+    return discount;
+  };
+
+  const handlePayCashClick = () => {
+    setShowPopup(true);
+  };
+
+  const handlePopupClose = () => {
+    setShowPopup(false);
+    setReceiptIdError(""); // Reset error when closing the popup
+  };
+
   const handleSubmit = async (event) => {
     event.preventDefault();
     if (
@@ -104,119 +103,128 @@ const Register = ({ onClose }) => {
       collegeEmail,
       department,
     };
-    const validate = userValidator.safeParse({ phoneNumber});
+
+    const validate = userValidator.safeParse({ phoneNumber });
     if (!validate.success) {
       alert(validate.error.errors[0].message);
       return;
     }
 
-    console.log("Form Data Submitted: ", formData);
-
-    const res = await axios.post('https://yugmak24.el.r.appspot.com/api/v1/createOrder', {
-      amount: totalAmount * 100,
-      currency: "INR",
-      receipt: "receipt#1",
-    },
-      {
-        headers: {
-          "Content-Type": "application/json",
+    setLoading(true);
+    try {
+      const res = await axios.post(
+        "https://yugmak24.el.r.appspot.com/api/v1/createOrder",
+        {
+          amount: totalAmount * 100,
+          currency: "INR",
+          receipt: "receipt#1",
         },
-      })
-
-    console.log(res.data);
-
-    const { id, amount, key_id, description } = res.data;
-
-    const options = {
-      key: key_id,
-      amount: amount * 100,
-      currency: "INR",
-      name: "YUGMAK 2024",
-      description: description,
-      order_id: id,
-      handler: async function (response) {
-        try {
-          const verifyResponse = await axios.post(
-            `https://yugmak24.el.r.appspot.com/api/v1/prime/register`,
-            {
-              paymentId: response.razorpay_payment_id,
-              orderId: response.razorpay_order_id,
-              fullName: name,
-              dateOfBirth: dob,
-              gender,
-              personalEmail: email,
-              phoneNumber,
-              sapId,
-              collegeEmail: collegeEmail,
-              course,
-              department,
-              degree,
-              graduationStartYear: degreeStartYear,
-              graduationEndYear: degreeEndYear,
-              graduationCurrentYear: currentYear,
-              membershipPeriod,
-              coupon,
-              transactionId: response.razorpay_payment_id
-            },
-            {
-              headers: {
-                "Content-Type": "application/json",
-                signature: response.razorpay_signature,
-              },
-            }
-          );
-
-          if (verifyResponse.data.success) {
-            navigate("/success", {
-              state: {
-                transactionId: response.razorpay_payment_id,
-                totalAmount: amount
-              }
-            }); // Redirect to /success
-          } else {
-            alert(
-              verifyResponse.data.message ||
-              "Payment verification failed. Please try again."
-            );
-          }
-        } catch (verifyError) {
-          console.log(
-            "Error during payment verification:",
-            verifyError.response || verifyError.message || verifyError
-          );
-          alert(
-            "Error during payment verification:",
-            verifyError.response || verifyError.message || verifyError
-          );
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
         }
-      },
-      prefill: {
-        name,
-        email: email,
-        contact: phoneNumber,
-      },
-      theme: {
-        color: "#3399cc",
-      },
+      );
+
+      const { id, amount, key_id, description } = res.data;
+
+      const options = {
+        key: key_id,
+        amount: amount * 100,
+        currency: "INR",
+        name: "YUGMAK 2024",
+        description: description,
+        order_id: id,
+        handler: async function (response) {
+          try {
+            setLoading(true);
+            const verifyResponse = await axios.post(
+              `https://yugmak24.el.r.appspot.com/api/v1/prime/register`,
+              {
+                paymentId: response.razorpay_payment_id,
+                orderId: response.razorpay_order_id,
+                fullName: name,
+                dateOfBirth: dob,
+                gender,
+                personalEmail: email,
+                phoneNumber,
+                sapId,
+                collegeEmail: collegeEmail,
+                course,
+                department,
+                degree,
+                graduationStartYear: degreeStartYear,
+                graduationEndYear: degreeEndYear,
+                graduationCurrentYear: currentYear,
+                membershipPeriod,
+                coupon,
+                transactionId: response.razorpay_payment_id,
+              },
+              {
+                headers: {
+                  "Content-Type": "application/json",
+                  signature: response.razorpay_signature,
+                },
+              }
+            );
+
+            if (verifyResponse.data.success) {
+              navigate("/success", {
+                state: {
+                  transactionId: response.razorpay_payment_id,
+                  totalAmount: amount,
+                },
+              });
+            } else {
+              alert(
+                verifyResponse.data.message ||
+                  "Payment verification failed. Please try again."
+              );
+            }
+          } catch (verifyError) {
+            console.error(
+              "Error during payment verification:",
+              verifyError.response || verifyError.message || verifyError
+            );
+            alert("Error during payment verification. Please try again.");
+          } finally {
+            setLoading(false);
+          }
+        },
+        prefill: {
+          name,
+          email: email,
+          contact: phoneNumber,
+        },
+        theme: {
+          color: "#3399cc",
+        },
+      };
+      const paymentObject = new window.Razorpay(options);
+      paymentObject.open();
+    } catch (err) {
+      console.error(err);
+      alert("Error creating order. Please try again.");
+    } finally {
+      setLoading(false);
     }
-    const paymentObject = new window.Razorpay(options);
-    paymentObject.open();
   };
 
   const handleCouponApply = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post('https://yugmak24.el.r.appspot.com/api/v1/prime/applyCoupon', {
-        couponCode: coupon,
-        phoneNumber
-      },
+      const res = await axios.post(
+        "https://yugmak24.el.r.appspot.com/api/v1/prime/applyCoupon",
+        {
+          couponCode: coupon,
+          phoneNumber,
+        },
         {
           headers: {
             "Content-Type": "application/json",
           },
-        })
-
-      console.log(res.data);
+        }
+      );
 
       if (res.data.success) {
         alert("Coupon Applied Successfully!");
@@ -225,10 +233,10 @@ const Register = ({ onClose }) => {
         alert(res.data.message);
       }
     } catch (err) {
-      console.log(err);
+      console.error(err);
       alert("Error applying coupon. Please try again.");
     }
-  }
+  };
 
   const handlePayCash = async (e) => {
     e.preventDefault();
@@ -260,45 +268,49 @@ const Register = ({ onClose }) => {
       alert(validate.error.errors[0].message);
       return;
     }
+
     try {
-      const res = await axios.post('https://yugmak24.el.r.appspot.com/api/v1/prime/primeCashPayment', {
-        fullName: name,
-        dateOfBirth: dob,
-        gender,
-        personalEmail: email,
-        phoneNumber,
-        sapId,
-        collegeEmail: collegeEmail,
-        course,
-        department,
-        degree,
-        graduationStartYear: degreeStartYear,
-        graduationEndYear: degreeEndYear,
-        graduationCurrentYear: currentYear,
-        membershipPeriod,
-        coupon,
-      },
+      setLoading(true);
+      const res = await axios.post(
+        "https://yugmak24.el.r.appspot.com/api/v1/prime/primeCashPayment",
+        {
+          fullName: name,
+          dateOfBirth: dob,
+          gender,
+          personalEmail: email,
+          phoneNumber,
+          sapId,
+          collegeEmail: collegeEmail,
+          course,
+          department,
+          degree,
+          graduationStartYear: degreeStartYear,
+          graduationEndYear: degreeEndYear,
+          graduationCurrentYear: currentYear,
+          membershipPeriod,
+          coupon,
+          transactionId: receiptId,
+        },
         {
           headers: {
             "Content-Type": "application/json",
           },
-        })
-
-      if (!res.data.success) {
-        alert(res.data.message);
-        return;
+        }
+      );
+      setShowPopup(false);
+      if (res.data.success) {
+        alert("Registration successful!");
+        onClose();
+      } else {
+        alert(res.data.message || "Error during registration. Please try again.");
       }
-
-      // console.log("Receipt ID Submitted:", receiptId);
-      // setShowPopup(false);
-      navigate("/success"); // Redirect to /success
-
-      console.log(res.data);
     } catch (err) {
-      console.log(err);
-      alert("Error paying cash. Please try again.");
+      console.error(err);
+      alert("Error during registration. Please try again.");
+    } finally {
+      setLoading(false);
     }
-  }
+  };
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
@@ -314,6 +326,14 @@ const Register = ({ onClose }) => {
         <h2 className="text-2xl font-semibold mb-4">Prime Member Registration</h2>
 
         <form className="text-gray-700 flex flex-wrap justify-between">
+        {loading && (
+        <div className="fixed  z-10 inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="flex flex-col items-center">
+            <div className="w-16 h-16 border-4 border-t-4 border-t-white border-white rounded-full animate-spin"></div>
+            <p className="text-white mt-4">Loading, please wait...</p>
+          </div>
+        </div>
+      )}
           <div className="mb-4 w-1/2 px-2">
             <label htmlFor="name" className="block text-sm font-medium">
               Name
