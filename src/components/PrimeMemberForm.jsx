@@ -118,9 +118,9 @@ const Register = ({ onClose }) => {
     setLoading(true);
     try {
       const res = await axios.post(
-        "https://yugmak24.el.r.appspot.com/api/v1/createOrder",
+        "http://localhost:8080/api/v1/createOrder",
         {
-          amount: totalAmount * 100,
+          amount: 100,
           currency: "INR",
           receipt: "receipt#1",
         },
@@ -144,7 +144,7 @@ const Register = ({ onClose }) => {
           try {
             setLoading(true);
             const verifyResponse = await axios.post(
-              `https://yugmak24.el.r.appspot.com/api/v1/prime/register`,
+              `http://localhost:8080/api/v1/prime/register`,
               {
                 paymentId: response.razorpay_payment_id,
                 orderId: response.razorpay_order_id,
@@ -278,6 +278,7 @@ const Register = ({ onClose }) => {
 
     try {
       setLoading(true);
+      console.log(newPrimeMember);
       const res = await axios.post(
         "https://yugmak24.el.r.appspot.com/api/v1/prime/primeCashPayment",
         {
@@ -308,7 +309,7 @@ const Register = ({ onClose }) => {
       setShowPopup(false);
       if (res.data.success) {
         alert("Registration successful!");
-        onClose();
+        // onClose();
       } else {
         alert(res.data.message || "Error during registration. Please try again.");
       }
@@ -575,8 +576,7 @@ const Register = ({ onClose }) => {
                 <input
                   type="radio"
                   name="isPrimeMember"
-                  value="yes"
-                  
+                  value={newPrimeMember}
                   checked={newPrimeMember === true}
                   onChange={() => setNewPrimeMember(true)}
                   required
@@ -587,7 +587,7 @@ const Register = ({ onClose }) => {
                 <input
                   type="radio"
                   name="isPrimeMember"
-                  value="no"
+                  value={newPrimeMember}
                   checked={newPrimeMember === false}
                   onChange={() => setNewPrimeMember(false)}
                   required
