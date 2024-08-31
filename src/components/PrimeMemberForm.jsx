@@ -14,6 +14,8 @@ const Register = ({ onClose }) => {
   const [receiptIdError, setReceiptIdError] = useState("");
   const navigate = useNavigate();
 
+  const [newPrimeMember,setNewPrimeMember] = useState(true);
+
   const [name, setName] = useState("");
   const [dob, setDob] = useState("");
   const [gender, setGender] = useState("");
@@ -81,7 +83,8 @@ const Register = ({ onClose }) => {
       !degreeStartYear ||
       !degreeEndYear ||
       !currentYear ||
-      !membershipPeriod
+      !membershipPeriod ||
+      !newPrimeMember 
     ) {
       alert("Please fill out all required fields.");
       return;
@@ -102,7 +105,9 @@ const Register = ({ onClose }) => {
       coupon,
       collegeEmail,
       department,
+      newPrimeMember,
     };
+
 
     const validate = userValidator.safeParse({ phoneNumber });
     if (!validate.success) {
@@ -159,6 +164,7 @@ const Register = ({ onClose }) => {
                 membershipPeriod,
                 coupon,
                 transactionId: response.razorpay_payment_id,
+                newPrimeMember,
               },
               {
                 headers: {
@@ -254,7 +260,8 @@ const Register = ({ onClose }) => {
       !degreeStartYear ||
       !degreeEndYear ||
       !currentYear ||
-      !membershipPeriod
+      !membershipPeriod ||
+      !newPrimeMember
     ) {
       alert("Please fill out all required fields.");
       return;
@@ -290,6 +297,7 @@ const Register = ({ onClose }) => {
           membershipPeriod,
           coupon,
           transactionId: receiptId,
+          newPrimeMember,
         },
         {
           headers: {
@@ -559,6 +567,34 @@ const Register = ({ onClose }) => {
               <option value="3">3 Years</option>
               <option value="4">4 Years</option>
             </select>
+          </div>
+          <div className="mb-4 w-full px-2">
+            <label htmlFor="isPrimeMember">Are you a New Prime Member?</label>
+            <div className="radio-group">
+              <label>
+                <input
+                  type="radio"
+                  name="isPrimeMember"
+                  value="yes"
+                  
+                  checked={newPrimeMember === true}
+                  onChange={() => setNewPrimeMember(true)}
+                  required
+                />
+                <span className="mr-5">Yes</span>
+              </label>
+              <label>
+                <input
+                  type="radio"
+                  name="isPrimeMember"
+                  value="no"
+                  checked={newPrimeMember === false}
+                  onChange={() => setNewPrimeMember(false)}
+                  required
+                />
+                <span>No</span>
+              </label>
+            </div>
           </div>
 
           <div className="mb-4 w-2/3 px-2">
