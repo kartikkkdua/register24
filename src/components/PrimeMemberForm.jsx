@@ -132,7 +132,7 @@ const Register = ({ onClose }) => {
         key: key_id,
         amount: amount * 100,
         currency: "INR",
-        name: "YUGMAK 2024",
+        name: "CSI Prime Registration",
         description: description,
         order_id: id,
         handler: async function (response) {
@@ -172,7 +172,7 @@ const Register = ({ onClose }) => {
               navigate("/success", {
                 state: {
                   transactionId: response.razorpay_payment_id,
-                  totalAmount: amount,
+                  totalAmount: totalAmount,
                 },
               });
             } else {
