@@ -304,12 +304,15 @@ const Register = ({ onClose }) => {
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
 
       <div className="bg-white bg-opacity-75 p-8 rounded-lg shadow-lg text-center max-w-2xl w-full mx-4 pt-3 pb-3">
+      <div className=" h-[35rem] overflow-y-scroll">
+
         <img
           src={logo}
           alt="logo"
           className="mb-4 h-16 w-auto mx-auto my-auto" // Adjust height and other styles as needed
         />
         <h2 className="text-2xl font-semibold mb-4">Prime Member Registration</h2>
+
         <form className="text-gray-700 flex flex-wrap justify-between">
           <div className="mb-4 w-1/2 px-2">
             <label htmlFor="name" className="block text-sm font-medium">
@@ -612,6 +615,7 @@ const Register = ({ onClose }) => {
             </div>
           )}
         </form>
+        </div>
       </div>
     </div>
   );
